@@ -31,7 +31,10 @@ Summary:
 
 ## Git / GitHub
 
-The project is a Git repo. To push to GitHub:
+- **Repo:** https://github.com/karmajinx-og/Decimator-Android  
+- **Canonical path:** Single project folder; recommended path `developer/Decimator-Android`. See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md).
+
+To push to GitHub (e.g. after cloning):
 
 1. Create a new repository on GitHub (e.g. `Decimator-Android`) at [github.com/karmajinx-og](https://github.com/karmajinx-og).
 2. Add the remote and push:
@@ -43,7 +46,7 @@ The project is a Git repo. To push to GitHub:
 
 ## Build
 
-Open the project in **Android Studio** (Hedgehog or later recommended) and sync. The Gradle wrapper (`./gradlew`) is included. You need the **FTDI D2XX** library in **app/libs/** (see **app/libs/README.md**) or the build will fail on missing `com.ftdi.j2xx` classes. Then:
+The Gradle wrapper (`./gradlew`) is included. You need the **FTDI D2XX** library in **app/libs/** (see **app/libs/README.md**) or the build will fail on missing `com.ftdi.j2xx` classes. Then:
 
 ```bash
 ./gradlew assembleDebug

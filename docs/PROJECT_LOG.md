@@ -2,7 +2,7 @@
 
 **Project:** Decimator-Android  
 **Repo:** https://github.com/karmajinx-og/Decimator-Android  
-**Last updated:** 2026-03-08
+**Last updated:** 2026-03-09
 
 ---
 
@@ -116,3 +116,40 @@
 - **FTDI D2XX:** User had **Android Java D2xx** package (2.13) in the project folder. **d2xx.jar** was copied from `Android_Java_D2xx_2.13/d2xx.jar` into **app/libs/d2xx.jar** so the build can resolve the dependency.
 - **Status:** Build dependency satisfied. User is taking a break.
 - **When back:** Use **docs/RECALL.md** — next steps are run `./gradlew assembleDebug`, then install and test on a USB-host device (with or without a Decimator).
+
+---
+
+## 12. FTDI licence audit — distribution risk
+
+- **Audit received:** The binding FTDI Driver Licence Terms (clause 3.1.7) prohibit making the Software available "to any person"; the informal note on the D2XX drivers page is more permissive but does not override the terms.
+- **Conclusion:** Distribution of the D2XX library as part of the app to end users (e.g. via Google Play) may **not** be permitted without FTDI clarification.
+- **Documented in:** [docs/FTDI_LICENCE_AUDIT.md](FTDI_LICENCE_AUDIT.md). Recommendation: contact FTDI or obtain legal advice before publishing.
+- **RECALL.md, app/libs/README.md, MASTER_CONTEXT** updated to point to the licence audit.
+
+---
+
+## 13. FTDI permission request sent
+
+- **Email sent** to FTDI (2026-03-08) requesting permission to bundle Android Java D2XX in the app and distribute to end users (e.g. Google Play), with acknowledgement in app/docs if granted.
+- **Status:** Pending response. When received: if granted → document and add acknowledgement in app; if denied or licence required → document and do not publish until resolved.
+- **docs/FTDI_LICENCE_AUDIT.md** updated with “Permission request sent” and next steps when response is received.
+
+---
+
+## 14. Build lock — emulator tested; backup and rollback
+
+- **Build fixes (session):** MainActivity — nullable intent in BroadcastReceivers (`intent ?: return`), `onNewIntent(Intent)` non-null; DecimatorFtdiDriver — removed `writeTimeout` (DriverParameters has only readTimeout); DecimatorApp — LocalContext read at Composable level, Toast on "Check for device".
+- **App name:** **Deci-Droid** (DecimatorApp title + strings.xml app_name).
+- **Emulator test:** Build successful; UI shows Deci-Droid, "Check for device" button and Toast confirmed. State stays NoDevice on emulator (no USB). **Locked:** next step is test on **physical device** with Decimator.
+- **Backup:** Timestamped build zip in **backups/**. **Supplementary/rollback:** supplementary/ updated; **supplementary-and-rollback.zip** regenerated.
+- **RECALL.md** and **MASTER_CONTEXT.md** updated for "when you come back" — physical device test.
+
+---
+
+## 15. Folder consolidation — single canonical copy (2026-03-09)
+
+- **Context:** Two local folders existed — `~/Decimator-Android` (detached at tag `v0.1.0-audit`, audit snapshot) and `~/DEVELOPER/Decimator-Android` (active development on `main`). Both pointed at the same GitHub repo.
+- **Change:** Removed the redundant `~/Decimator-Android` folder. This repo is the **single canonical copy**; main project path is **developer/Decimator-Android**.
+- **Docs added:** [docs/FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) — explains single-copy policy, canonical path, what was removed, and that audit snapshots should use tags or zips, not a second full folder.
+- **Docs updated:** MASTER_CONTEXT.md (directory layout + link to FOLDER_STRUCTURE.md), PROJECT_LOG.md (this entry), RECALL.md (GitHub section — single copy).
+- **GitHub:** Changes committed and pushed to `main`.

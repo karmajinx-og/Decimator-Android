@@ -4,6 +4,20 @@ This is the **master context** for the project: one place for rules, structure, 
 
 ---
 
+## Resuming work / recall
+
+After a break, read **[docs/RECALL.md](docs/RECALL.md)** first. It gives:
+
+- **When you come back — what is next?** — Build is **locked** and successful; app **Deci-Droid** tested on emulator (“Check for device” works). Next: install on a **physical device** with USB host + OTG and test with/without a Decimator (see RECALL).
+- **What has been done** — in detail (scaffold, USB, FTDI layer, protocol, state/UI, GitHub, docs, backups, **and all audit fixes** C1–C4, M1–M4, L1–L3).
+- **What is next to be done** — immediate (add AAR, build, test), short term (device type, register read), medium term (register map, control UI), later (device families).
+- **Every fix applied** — [docs/FIXES_APPLIED.md](docs/FIXES_APPLIED.md) lists every fix (critical, medium, low) in one place.
+- **Key file reference** — paths for design doc, rules, driver, protocol, UI, etc.
+
+Keep RECALL.md updated when you finish major work or change priorities.
+
+---
+
 ## What this project is
 
 - **Decimator-Android** is an Android app that controls Decimator Design hardware (converters, cross converters, multi-viewers) via **USB**, using the reverse‑engineered protocol and **FTDI bit-bang** mode.
@@ -31,15 +45,21 @@ This is the **master context** for the project: one place for rules, structure, 
 
 - **Changelog / narrative:** [docs/PROJECT_LOG.md](docs/PROJECT_LOG.md) — what was done (project setup, FTDI layer, protocol port, USB permissions, GitHub update, rules/backup setup).
 
+## Sharing for audit
+
+- **Guide:** [docs/SHARING_FOR_AUDIT.md](docs/SHARING_FOR_AUDIT.md) — how to share the build for others to audit (GitHub vs zip snapshot).
+
 ---
 
 ## Directory layout (high level)
+
+**Canonical project folder:** This repo is the single copy; main path is **developer/Decimator-Android**. See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for the 2026-03-09 consolidation.
 
 | Path | Purpose |
 |------|--------|
 | **app/** | Android app module (Kotlin, Compose, FTDI, USB). |
 | **app/libs/** | FTDI D2XX AAR/JAR goes here; see `app/libs/README.md`. |
-| **docs/** | PROJECT_LOG.md, RULES.md. |
+| **docs/** | PROJECT_LOG.md, RULES.md, RECALL.md, SHARING_FOR_AUDIT.md, **FOLDER_STRUCTURE.md** (single copy, consolidation), AUDIT_RESPONSE.md, LESSONS_FROM_AUDIT.md, AUDIT_PROMPT.md, FIXES_APPLIED.md, **FTDI_LICENCE_AUDIT.md** (distribution risk). |
 | **gradle/** | Wrapper config, libs.versions.toml. |
 | **backups/** | Timestamped zip backups of the build (see backups/README.md). |
 | **supplementary/** | Supplementary and rollback files; update this folder and optionally zip as `supplementary-and-rollback.zip`. |
@@ -52,7 +72,7 @@ This is the **master context** for the project: one place for rules, structure, 
 ## Build and run
 
 1. Put the **FTDI D2XX** library in `app/libs/` (see `app/libs/README.md`).
-2. Open the project in **Android Studio**, sync Gradle.
+2. Sync Gradle (from the project root: `./gradlew` or your IDE).
 3. Build: `./gradlew assembleDebug`  
    Install: `./gradlew installDebug`
 4. Device must have **USB host** and **OTG**; connect Decimator hardware and grant USB permission in the app.
@@ -73,3 +93,5 @@ This is the **master context** for the project: one place for rules, structure, 
 ## Updating this document
 
 - When you add or remove top-level folders, change the backup process, or change where rules live, update **MASTER_CONTEXT.md** and, if relevant, **docs/PROJECT_LOG.md**.
+- When you return from a break or complete significant work, update **docs/RECALL.md** ("What has been done" / "What is next to be done" and "Last updated").
+- Before calling code "ready for audit" or "ready for review," use **docs/LESSONS_FROM_AUDIT.md** (short checklist). For a **full, methodical audit**, use **docs/AUDIT_PROMPT.md** (phases, prompts, and output format).

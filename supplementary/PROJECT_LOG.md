@@ -2,7 +2,7 @@
 
 **Project:** Decimator-Android  
 **Repo:** https://github.com/karmajinx-og/Decimator-Android  
-**Last updated:** 2026-03-08
+**Last updated:** 2026-03-09
 
 ---
 
@@ -67,8 +67,89 @@
 
 ## 7. Files and folders added in this session (rules/backup)
 
-- `docs/PROJECT_LOG.md`
-- `docs/RULES.md`
-- `MASTER_CONTEXT.md`
-- `backups/` (build backup zip + README)
-- `supplementary/` (design doc, README copy, etc.) and optional `supplementary-and-rollback.zip`
+- `docs/PROJECT_LOG.md` — This log.
+- `docs/RULES.md` — Project rules.
+- `MASTER_CONTEXT.md` — Master context (root).
+- `backups/README.md` — How to create build backup zips.
+- `backups/Decimator-Android-build-2026-03-08.zip` — First build backup (excludes .git, build, .gradle, etc.).
+- `supplementary/` — Design doc, README copy, RULES, MASTER_CONTEXT, PROJECT_LOG; update this folder for rollback, regenerate zip when needed.
+- `supplementary-and-rollback.zip` — Zip of `supplementary/` (at project root); regenerate after updating supplementary/.
+- `.gitignore` — Added `backups/*.zip` so large backup zips are not committed.
+
+---
+
+## 8. Recall and resume (before break)
+
+- **docs/RECALL.md** — Recall document: what has been done (in detail), what is next to be done (immediate → short → medium → later), how to resume, key file reference. For use when returning from a break.
+- **MASTER_CONTEXT.md** — Updated with “Resuming work / recall” section (points to RECALL.md), RECALL added to directory layout, and note to keep RECALL updated when resuming or after significant work.
+
+---
+
+## 9. First audit — critical fixes (C2–C4)
+
+- **Audit:** 14 issues (4 critical, 4 medium, 6 low). Critical C2–C4 fixed so the project compiles (with FTDI AAR in app/libs/).
+- **C2:** Replaced invalid `is Result.success` / `is Result.failure` with `result.isSuccess` and `getOrNull()` / `exceptionOrNull()` in DecimatorViewModel.
+- **C3:** Moved `ACTION_USB_PERMISSION` inside `object UsbPermissionHelper` so `UsbPermissionHelper.ACTION_USB_PERMISSION` compiles.
+- **C4:** DecimatorError: renamed FtdiError/IOError payload to `detail: String?`, fixed getter (was `msg` → `detail`), removed conflicting `override val message: String?` in subclasses.
+- **C1 (missing AAR):** By design; see app/libs/README.md and docs/AUDIT_RESPONSE.md.
+- **docs/AUDIT_RESPONSE.md** — Full audit response, why C2–C4 weren’t caught (no local compile, Result API, file-level const, Exception override).
+
+---
+
+## 10. Full audit fixes (medium + low)
+
+- **C2/C4 aligned to audit:** DecimatorViewModel now uses `result.onSuccess { }.onFailure { }`; DecimatorError uses `ftdiMessage`/`ioMessage` and `data object DeviceDisconnected`.
+- **M1:** MainActivity — usbDetachReceiver for ACTION_USB_DEVICE_DETACHED; register/unregister in onResume/onPause; calls viewModel.onDeviceDetached(device).
+- **M2:** DecimatorFtdiDriver.clockRawBytes — throw IOError if read != chunk (short read).
+- **M3:** DecimatorProtocol.rawResponseToBytes — Log.w on bit-phase mismatch, continue (no throw).
+- **M4:** DecimatorProtocol — COMMAND_PREAMBLE; READ_PREAMBLE and WRITE_PREAMBLE delegate to it; comment references protocol.py.
+- **L1:** DecimatorFtdiDriver — removed duplicate DecimatorUsbConstants; use usb.DecimatorUsbConstants only.
+- **L2:** MainActivity — removed dead viewModel ?: return; use viewModel directly.
+- **L3:** DecimatorViewModel — override onCleared(), call disconnect().
+- **L4–L6 deferred:** Minification, Kotlin 2.x, AndroidViewModel documented in AUDIT_RESPONSE.
+- **docs/FIXES_APPLIED.md** — Single reference list of every fix (critical, medium, low applied, low deferred).
+
+---
+
+## 11. FTDI library in place; break before testing
+
+- **FTDI D2XX:** User had **Android Java D2xx** package (2.13) in the project folder. **d2xx.jar** was copied from `Android_Java_D2xx_2.13/d2xx.jar` into **app/libs/d2xx.jar** so the build can resolve the dependency.
+- **Status:** Build dependency satisfied. User is taking a break.
+- **When back:** Use **docs/RECALL.md** — next steps are run `./gradlew assembleDebug`, then install and test on a USB-host device (with or without a Decimator).
+
+---
+
+## 12. FTDI licence audit — distribution risk
+
+- **Audit received:** The binding FTDI Driver Licence Terms (clause 3.1.7) prohibit making the Software available "to any person"; the informal note on the D2XX drivers page is more permissive but does not override the terms.
+- **Conclusion:** Distribution of the D2XX library as part of the app to end users (e.g. via Google Play) may **not** be permitted without FTDI clarification.
+- **Documented in:** [docs/FTDI_LICENCE_AUDIT.md](FTDI_LICENCE_AUDIT.md). Recommendation: contact FTDI or obtain legal advice before publishing.
+- **RECALL.md, app/libs/README.md, MASTER_CONTEXT** updated to point to the licence audit.
+
+---
+
+## 13. FTDI permission request sent
+
+- **Email sent** to FTDI (2026-03-08) requesting permission to bundle Android Java D2XX in the app and distribute to end users (e.g. Google Play), with acknowledgement in app/docs if granted.
+- **Status:** Pending response. When received: if granted → document and add acknowledgement in app; if denied or licence required → document and do not publish until resolved.
+- **docs/FTDI_LICENCE_AUDIT.md** updated with “Permission request sent” and next steps when response is received.
+
+---
+
+## 14. Build lock — emulator tested; backup and rollback
+
+- **Build fixes (session):** MainActivity — nullable intent in BroadcastReceivers (`intent ?: return`), `onNewIntent(Intent)` non-null; DecimatorFtdiDriver — removed `writeTimeout` (DriverParameters has only readTimeout); DecimatorApp — LocalContext read at Composable level, Toast on "Check for device".
+- **App name:** **Deci-Droid** (DecimatorApp title + strings.xml app_name).
+- **Emulator test:** Build successful; UI shows Deci-Droid, "Check for device" button and Toast confirmed. State stays NoDevice on emulator (no USB). **Locked:** next step is test on **physical device** with Decimator.
+- **Backup:** Timestamped build zip in **backups/**. **Supplementary/rollback:** supplementary/ updated; **supplementary-and-rollback.zip** regenerated.
+- **RECALL.md** and **MASTER_CONTEXT.md** updated for "when you come back" — physical device test.
+
+---
+
+## 15. Folder consolidation — single canonical copy (2026-03-09)
+
+- **Context:** Two local folders existed — `~/Decimator-Android` (detached at tag `v0.1.0-audit`, audit snapshot) and `~/DEVELOPER/Decimator-Android` (active development on `main`). Both pointed at the same GitHub repo.
+- **Change:** Removed the redundant `~/Decimator-Android` folder. This repo is the **single canonical copy**; main project path is **developer/Decimator-Android**.
+- **Docs added:** [docs/FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) — explains single-copy policy, canonical path, what was removed, and that audit snapshots should use tags or zips, not a second full folder.
+- **Docs updated:** MASTER_CONTEXT.md (directory layout + link to FOLDER_STRUCTURE.md), PROJECT_LOG.md (this entry), RECALL.md (GitHub section — single copy).
+- **GitHub:** Changes committed and pushed to `main`.

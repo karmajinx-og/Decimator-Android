@@ -1,18 +1,19 @@
 # Recall — context for returning from a break
 
 **Purpose:** When you (or an assistant) return to the project, read this for a detailed picture of what’s done and what’s next.  
-**Last updated:** 2026-03-08
+**Last updated:** 2026-03-09
 
 ---
 
-## When you come back — what is next? (Testing)
+## When you come back — what is next? (Physical device test)
 
 1. **Read this file** and [MASTER_CONTEXT.md](../MASTER_CONTEXT.md).
-2. **FTDI library:** Already in place — **app/libs/d2xx.jar** (from Android Java D2XX 2.13). No need to add it again.
-3. **Build:** Run **`./gradlew assembleDebug`**. Fix any compile errors if they appear.
-4. **Test on device:** Install the APK on a device with USB host + OTG. Test **with** a Decimator (connect, permission, open, disconnect) or **without** (confirm “Connect a Decimator device” / permission flow).
-5. **After testing:** Pick from “What is next to be done” below (e.g. device type from serial, register map, control UI).
-6. **Full list of every fix:** [docs/FIXES_APPLIED.md](FIXES_APPLIED.md).
+2. **Build is locked:** App **builds successfully**. FTDI lib in **app/libs/d2xx.jar**. UI tested on **emulator**: title **Deci-Droid**, “Check for device” button works (Toast “Checking for device…”). No device on emulator so state stays NoDevice — **expected**.
+3. **Next step:** Install on a **physical Android device** with **USB host + OTG**. Connect a **Decimator** (or leave unplugged). Test: “Check for device” → with device you should see “Device found” and “Grant USB permission”; grant → Connecting → Connected and “Disconnect”. Without device: “Connect a Decimator device via USB OTG”.
+4. **After device test:** Pick from “What is next to be done” below (device type from serial, register map, control UI).
+5. **Full list of every fix:** [docs/FIXES_APPLIED.md](FIXES_APPLIED.md).
+
+**Legal — FTDI licence:** Permission request **sent** to FTDI (2026-03-08); **awaiting response**. See [docs/FTDI_LICENCE_AUDIT.md](FTDI_LICENCE_AUDIT.md). Do not publish to stores until permission is granted or resolved.
 
 ---
 
@@ -60,12 +61,13 @@
 - **State:** `app/.../connection/ConnectionState.kt` — sealed: NoDevice, PendingPermission(device), PermissionDenied(device), UnsupportedDevice(device), Connecting, Connected(connection, device), Error(DecimatorError).
 - **ViewModel:** `app/.../connection/DecimatorViewModel.kt` — `state: StateFlow<ConnectionState>`, `refreshDeviceState()`, `requestUsbPermission()`, `onPermissionGranted()`, `onPermissionDenied()`, `disconnect()`, `onDeviceDetached()`. Opens device via `DecimatorFtdiDriver.open()` on IO.
 - **Activity:** `app/.../MainActivity.kt` — `BroadcastReceiver` for USB permission result, `onResume`/`onPause` register/unregister, `onNewIntent` for attach; holds `DecimatorViewModel` by `viewModels()`.
-- **UI:** `app/.../ui/DecimatorApp.kt` — Composable that takes ViewModel, collects `state`, shows message/button per state (NoDevice, PendingPermission with “Grant USB permission”, PermissionDenied, Connecting, Connected with “Disconnect”, Error). Theme: `app/.../ui/theme/Theme.kt`.
+- **UI:** `app/.../ui/DecimatorApp.kt` — Composable: title **Deci-Droid**; NoDevice shows “Connect a Decimator device via USB OTG” + **“Check for device”** button (Toast “Checking for device…”); PendingPermission “Grant USB permission”; PermissionDenied, Connecting, Connected “Disconnect”, Error. Theme: `app/.../ui/theme/Theme.kt`. App name in launcher: **Deci-Droid** (`strings.xml`).
 
 ### 6. GitHub and sharing
 
 - **Remote:** `origin` → `https://github.com/karmajinx-og/Decimator-Android.git`. Owner: **karmajinx-og**.
-- **Pushed:** Latest code on `main` (includes rules, docs, wrapper, supplementary, SHARING_FOR_AUDIT).
+- **Pushed:** Latest code on `main` (includes rules, docs, wrapper, supplementary, SHARING_FOR_AUDIT, FOLDER_STRUCTURE).
+- **Single copy:** This repo is the only project folder; main path **developer/Decimator-Android**. Redundant audit snapshot folder (`~/Decimator-Android`) removed 2026-03-09. See [docs/FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md).
 - **Audit tag:** `v0.1.0-audit` created and pushed. Auditors can clone and `git checkout v0.1.0-audit`.
 - **Sharing guide:** [docs/SHARING_FOR_AUDIT.md](SHARING_FOR_AUDIT.md) — GitHub (primary) vs zip snapshot.
 
@@ -78,8 +80,8 @@
 
 ### 8. Backups and rollback
 
-- **Build backups:** `backups/README.md` — how to create timestamped zips (exclude .git, build, .gradle, etc.). First backup: `backups/Decimator-Android-build-2026-03-08.zip` (not in Git; `backups/*.zip` in .gitignore).
-- **Supplementary:** Folder `supplementary/` — copies of design doc, README, RULES, MASTER_CONTEXT, PROJECT_LOG. Update folder when docs change; regenerate `supplementary-and-rollback.zip` from it when needed (zip in .gitignore).
+- **Build backups:** `backups/README.md` — how to create timestamped zips (exclude .git, build, .gradle, etc.). **Lock backup (this state):** `backups/Decimator-Android-build-2026-03-08-lock.zip` (not in Git; `backups/*.zip` in .gitignore). Restore from this zip to return to “build locked, emulator tested” state; add **app/libs/d2xx.jar** again after unzip (excluded from zip).
+- **Supplementary:** Folder `supplementary/` — copies of design doc, README, RULES, MASTER_CONTEXT, PROJECT_LOG, RECALL. **supplementary-and-rollback.zip** regenerated at lock (zip in .gitignore).
 
 ### 9. Build audit — all fixes applied
 
@@ -89,15 +91,21 @@
 - **Low applied:** L1 single DecimatorUsbConstants; L2 remove dead viewModel check; L3 onCleared() → disconnect().
 - **Low deferred:** L4 minification, L5 Kotlin 2.x, L6 AndroidViewModel (documented in AUDIT_RESPONSE).
 
+### 10. Build lock — emulator tested (2026-03-08)
+
+- **Build fixes:** MainActivity — nullable `intent` in receivers (`intent ?: return`), `onNewIntent(intent: Intent)`; DecimatorFtdiDriver — removed unsupported `writeTimeout` from DriverParameters (API has only readTimeout); DecimatorApp — `LocalContext.current` read at Composable level, passed to onClick; Toast on “Check for device” for feedback.
+- **App name:** **Deci-Droid** (in-app title and `strings.xml` app_name).
+- **Emulator:** Build successful; UI shows Deci-Droid, “Check for device” works (Toast). State stays NoDevice on emulator (no USB device). **Locked for return:** next = test on **physical device** with Decimator.
+
 ---
 
 ## What is next to be done
 
-### Immediate (when you’re back — testing)
+### Immediate (when you’re back — physical device test)
 
-1. ~~**Add FTDI D2XX** to app/libs/~~ — **Done.** `app/libs/d2xx.jar` is in place (Android Java D2XX 2.13).
-2. **Run build locally:** `./gradlew assembleDebug` (Java 17 + Android SDK required, e.g. via Android Studio).
-3. **Install and test on device:** USB host + OTG. Test with Decimator (connect, grant permission, open, disconnect) or without (confirm “Connect a Decimator device” / permission flow).
+1. ~~**Add FTDI D2XX** to app/libs/~~ — **Done.** `app/libs/d2xx.jar` in place.
+2. ~~**Run build**~~ — **Done.** Build successful; emulator tested.
+3. **Install and test on physical device:** USB host + OTG. Connect Decimator → “Check for device” → “Device found” / “Grant USB permission” → grant → Connected / Disconnect. Without device: confirm “Connect a Decimator device via USB OTG”.
 
 ### Short term (from design doc and current gaps)
 
@@ -121,7 +129,7 @@
 ## How to resume
 
 1. **Read this file** (RECALL.md) and [MASTER_CONTEXT.md](../MASTER_CONTEXT.md).
-2. **Sync and build:** Open project in Android Studio, add FTDI AAR to `app/libs/` if not done, run `./gradlew assembleDebug`.
+2. **Sync and build:** Add FTDI AAR/JAR to `app/libs/` if not done, then run `./gradlew assembleDebug` from the project root.
 3. **Pick the next task** from “What is next to be done” (e.g. add AAR → build → test on device → device type from serial → register map port).
 4. **After making changes:** Update [docs/PROJECT_LOG.md](PROJECT_LOG.md) if significant; update this RECALL’s “What has been done” / “What is next” if the roadmap changes.
 5. **Before calling anything “ready for audit”:** Use [docs/LESSONS_FROM_AUDIT.md](LESSONS_FROM_AUDIT.md) (short checklist). For a **full audit**, follow [docs/AUDIT_PROMPT.md](AUDIT_PROMPT.md) (phases, prompts, output format).
