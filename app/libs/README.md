@@ -14,3 +14,5 @@ The app uses:
 - **Baud 3,000,000**, **latency 1 ms**, **RTS/CTS flow control**
 
 Without the library in `app/libs/`, the project will not compile.
+
+**Distribution / licence:** FTDI’s binding Licence Terms may prohibit distributing the D2XX library as part of your app to end users. Before publishing (e.g. Google Play), see **docs/FTDI_LICENCE_AUDIT.md** and obtain FTDI clarification or legal advice.

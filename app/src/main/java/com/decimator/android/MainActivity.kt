@@ -28,13 +28,14 @@ class MainActivity : ComponentActivity() {
     private val usbPermissionReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (!UsbPermissionHelper.isPermissionIntent(intent?.action)) return
+            val i = intent ?: return
             val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, android.hardware.usb.UsbDevice::class.java)
+                i.getParcelableExtra(UsbManager.EXTRA_DEVICE, android.hardware.usb.UsbDevice::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                i.getParcelableExtra(UsbManager.EXTRA_DEVICE)
             }
-            val granted = intent?.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) == true
+            val granted = i.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
             if (device != null) {
                 if (granted) viewModel.onPermissionGranted(this@MainActivity, device)
                 else viewModel.onPermissionDenied(device)
@@ -45,11 +46,12 @@ class MainActivity : ComponentActivity() {
     private val usbDetachReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != UsbManager.ACTION_USB_DEVICE_DETACHED) return
+            val i = intent ?: return
             val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
+                i.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
             } else {
                 @Suppress("DEPRECATION")
-                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+                i.getParcelableExtra(UsbManager.EXTRA_DEVICE)
             }
             viewModel.onDeviceDetached(device)
         }
@@ -85,7 +87,7 @@ class MainActivity : ComponentActivity() {
         unregisterReceiver(usbDetachReceiver)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         viewModel.refreshDeviceState(this)

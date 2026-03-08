@@ -88,7 +88,7 @@ URL: https://ftdichip.com/drivers/d2xx-drivers/
 Identify the exact FTDI chip used in Decimator devices (likely FT232H or FT2232). USB VID `0x215F` / PID `0x6000` is confirmed.
 
 **Step 2 — Integrate FTDI Android D2XX library**
-Download FTDI's official Android D2XX `.aar` library and add it to an Android Studio project. This replaces the need for `pylibftdi`.
+Download FTDI's official Android D2XX `.aar` / `.jar` library and add it to the Android project (e.g. `app/libs/`). This replaces the need for `pylibftdi`.
 
 **Step 3 — Port the protocol**
 Translate `quentinmit/decimctl`'s Python protocol logic into Kotlin/Java:

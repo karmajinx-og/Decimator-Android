@@ -33,7 +33,6 @@ object DecimatorFtdiDriver {
                 }
                 val params = D2xxManager.DriverParameters().apply {
                     readTimeout = 5000
-                    writeTimeout = 5000
                 }
                 val ftDevice = manager.openByUsbDevice(context, usbDevice, params)
                     ?: return@withContext Result.failure(DecimatorError.OpenFailed("openByUsbDevice returned null"))

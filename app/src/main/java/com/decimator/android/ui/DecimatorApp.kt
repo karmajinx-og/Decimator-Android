@@ -1,5 +1,6 @@
 package com.decimator.android.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import com.decimator.android.connection.DecimatorViewModel
 @Composable
 fun DecimatorApp(viewModel: DecimatorViewModel) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -28,16 +30,28 @@ fun DecimatorApp(viewModel: DecimatorViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Decimator",
+            text = "Deci-Droid",
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
         when (val s = state) {
-            is ConnectionState.NoDevice -> Text(
-                text = "Connect a Decimator device via USB OTG",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            is ConnectionState.NoDevice -> {
+                Text(
+                    text = "Connect a Decimator device via USB OTG",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        viewModel.refreshDeviceState(context)
+                        Toast.makeText(context, "Checking for device…", Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier.height(56.dp)
+                ) {
+                    Text("Check for device")
+                }
+            }
             is ConnectionState.PendingPermission -> {
                 Text(
                     text = "Device found: ${s.device.productName ?: s.device.deviceName}. Grant USB permission.",
@@ -45,7 +59,7 @@ fun DecimatorApp(viewModel: DecimatorViewModel) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { viewModel.requestUsbPermission(LocalContext.current, s.device) }) {
+                Button(onClick = { viewModel.requestUsbPermission(context, s.device) }) {
                     Text("Grant USB permission")
                 }
             }

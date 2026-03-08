@@ -38,7 +38,7 @@ zip -r backups/Decimator-Android-build-2026-03-08.zip . \
 
 ## Testing the build locally
 
-From the project root (with **Java 17** and **Android SDK** available, e.g. via Android Studio):
+From the project root (with **Java 17** and **Android SDK** available):
 
 ```bash
 ./gradlew assembleDebug
