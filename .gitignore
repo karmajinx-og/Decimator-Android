@@ -30,8 +30,9 @@ local.properties
 *.keystore
 
 # FTDI D2XX library (download separately; do not redistribute)
-# Uncomment to ignore the AAR if you add it under app/libs:
-# app/libs/*.aar
+app/libs/*.aar
+app/libs/*.jar
+Android_Java_D2xx_2.13/
 
 # Build backup zips (large; keep in backups/ but don't commit)
 backups/*.zip

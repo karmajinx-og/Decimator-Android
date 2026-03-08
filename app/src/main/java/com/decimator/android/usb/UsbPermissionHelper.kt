@@ -7,13 +7,13 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Build
 
-const val ACTION_USB_PERMISSION = "com.decimator.android.USB_PERMISSION"
-
 /**
  * Request runtime permission for a Decimator USB device.
  * Call [requestPermission] then handle [Intent] in onNewIntent/onActivityResult with [hasPermission].
  */
 object UsbPermissionHelper {
+
+    const val ACTION_USB_PERMISSION = "com.decimator.android.USB_PERMISSION"
 
     fun hasPermission(usbManager: UsbManager, device: UsbDevice?): Boolean {
         if (device == null) return false

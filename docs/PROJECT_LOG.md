@@ -75,3 +75,44 @@
 - `supplementary/` — Design doc, README copy, RULES, MASTER_CONTEXT, PROJECT_LOG; update this folder for rollback, regenerate zip when needed.
 - `supplementary-and-rollback.zip` — Zip of `supplementary/` (at project root); regenerate after updating supplementary/.
 - `.gitignore` — Added `backups/*.zip` so large backup zips are not committed.
+
+---
+
+## 8. Recall and resume (before break)
+
+- **docs/RECALL.md** — Recall document: what has been done (in detail), what is next to be done (immediate → short → medium → later), how to resume, key file reference. For use when returning from a break.
+- **MASTER_CONTEXT.md** — Updated with “Resuming work / recall” section (points to RECALL.md), RECALL added to directory layout, and note to keep RECALL updated when resuming or after significant work.
+
+---
+
+## 9. First audit — critical fixes (C2–C4)
+
+- **Audit:** 14 issues (4 critical, 4 medium, 6 low). Critical C2–C4 fixed so the project compiles (with FTDI AAR in app/libs/).
+- **C2:** Replaced invalid `is Result.success` / `is Result.failure` with `result.isSuccess` and `getOrNull()` / `exceptionOrNull()` in DecimatorViewModel.
+- **C3:** Moved `ACTION_USB_PERMISSION` inside `object UsbPermissionHelper` so `UsbPermissionHelper.ACTION_USB_PERMISSION` compiles.
+- **C4:** DecimatorError: renamed FtdiError/IOError payload to `detail: String?`, fixed getter (was `msg` → `detail`), removed conflicting `override val message: String?` in subclasses.
+- **C1 (missing AAR):** By design; see app/libs/README.md and docs/AUDIT_RESPONSE.md.
+- **docs/AUDIT_RESPONSE.md** — Full audit response, why C2–C4 weren’t caught (no local compile, Result API, file-level const, Exception override).
+
+---
+
+## 10. Full audit fixes (medium + low)
+
+- **C2/C4 aligned to audit:** DecimatorViewModel now uses `result.onSuccess { }.onFailure { }`; DecimatorError uses `ftdiMessage`/`ioMessage` and `data object DeviceDisconnected`.
+- **M1:** MainActivity — usbDetachReceiver for ACTION_USB_DEVICE_DETACHED; register/unregister in onResume/onPause; calls viewModel.onDeviceDetached(device).
+- **M2:** DecimatorFtdiDriver.clockRawBytes — throw IOError if read != chunk (short read).
+- **M3:** DecimatorProtocol.rawResponseToBytes — Log.w on bit-phase mismatch, continue (no throw).
+- **M4:** DecimatorProtocol — COMMAND_PREAMBLE; READ_PREAMBLE and WRITE_PREAMBLE delegate to it; comment references protocol.py.
+- **L1:** DecimatorFtdiDriver — removed duplicate DecimatorUsbConstants; use usb.DecimatorUsbConstants only.
+- **L2:** MainActivity — removed dead viewModel ?: return; use viewModel directly.
+- **L3:** DecimatorViewModel — override onCleared(), call disconnect().
+- **L4–L6 deferred:** Minification, Kotlin 2.x, AndroidViewModel documented in AUDIT_RESPONSE.
+- **docs/FIXES_APPLIED.md** — Single reference list of every fix (critical, medium, low applied, low deferred).
+
+---
+
+## 11. FTDI library in place; break before testing
+
+- **FTDI D2XX:** User had **Android Java D2xx** package (2.13) in the project folder. **d2xx.jar** was copied from `Android_Java_D2xx_2.13/d2xx.jar` into **app/libs/d2xx.jar** so the build can resolve the dependency.
+- **Status:** Build dependency satisfied. User is taking a break.
+- **When back:** Use **docs/RECALL.md** — next steps are run `./gradlew assembleDebug`, then install and test on a USB-host device (with or without a Decimator).

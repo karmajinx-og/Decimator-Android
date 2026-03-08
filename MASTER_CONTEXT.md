@@ -4,6 +4,20 @@ This is the **master context** for the project: one place for rules, structure, 
 
 ---
 
+## Resuming work / recall
+
+After a break, read **[docs/RECALL.md](docs/RECALL.md)** first. It gives:
+
+- **When you come back — what is next?** — FTDI lib is already in **app/libs/d2xx.jar**. Next: run build, install on device, then test (see RECALL for testing steps).
+- **What has been done** — in detail (scaffold, USB, FTDI layer, protocol, state/UI, GitHub, docs, backups, **and all audit fixes** C1–C4, M1–M4, L1–L3).
+- **What is next to be done** — immediate (add AAR, build, test), short term (device type, register read), medium term (register map, control UI), later (device families).
+- **Every fix applied** — [docs/FIXES_APPLIED.md](docs/FIXES_APPLIED.md) lists every fix (critical, medium, low) in one place.
+- **Key file reference** — paths for design doc, rules, driver, protocol, UI, etc.
+
+Keep RECALL.md updated when you finish major work or change priorities.
+
+---
+
 ## What this project is
 
 - **Decimator-Android** is an Android app that controls Decimator Design hardware (converters, cross converters, multi-viewers) via **USB**, using the reverse‑engineered protocol and **FTDI bit-bang** mode.
@@ -43,7 +57,7 @@ This is the **master context** for the project: one place for rules, structure, 
 |------|--------|
 | **app/** | Android app module (Kotlin, Compose, FTDI, USB). |
 | **app/libs/** | FTDI D2XX AAR/JAR goes here; see `app/libs/README.md`. |
-| **docs/** | PROJECT_LOG.md, RULES.md, SHARING_FOR_AUDIT.md. |
+| **docs/** | PROJECT_LOG.md, RULES.md, RECALL.md, SHARING_FOR_AUDIT.md, AUDIT_RESPONSE.md, LESSONS_FROM_AUDIT.md, AUDIT_PROMPT.md, FIXES_APPLIED.md. |
 | **gradle/** | Wrapper config, libs.versions.toml. |
 | **backups/** | Timestamped zip backups of the build (see backups/README.md). |
 | **supplementary/** | Supplementary and rollback files; update this folder and optionally zip as `supplementary-and-rollback.zip`. |
@@ -77,3 +91,5 @@ This is the **master context** for the project: one place for rules, structure, 
 ## Updating this document
 
 - When you add or remove top-level folders, change the backup process, or change where rules live, update **MASTER_CONTEXT.md** and, if relevant, **docs/PROJECT_LOG.md**.
+- When you return from a break or complete significant work, update **docs/RECALL.md** (“What has been done” / “What is next to be done” and “Last updated”).
+- Before calling code “ready for audit” or “ready for review,” use **docs/LESSONS_FROM_AUDIT.md** (short checklist). For a **full, methodical audit**, use **docs/AUDIT_PROMPT.md** (phases, prompts, and output format).

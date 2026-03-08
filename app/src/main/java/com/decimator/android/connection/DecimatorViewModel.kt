@@ -63,18 +63,16 @@ class DecimatorViewModel : ViewModel() {
     private fun openDevice(context: Context, device: UsbDevice) {
         _state.value = ConnectionState.Connecting
         viewModelScope.launch {
-            when (val result = DecimatorFtdiDriver.open(context, device)) {
-                is kotlin.Result.success -> {
-                    _state.value = ConnectionState.Connected(result.getOrNull()!!, device)
+            DecimatorFtdiDriver.open(context, device)
+                .onSuccess { connection ->
+                    _state.value = ConnectionState.Connected(connection, device)
                 }
-                is kotlin.Result.failure -> {
-                    val err = result.exceptionOrNull()
+                .onFailure { err ->
                     _state.value = when (err) {
                         is DecimatorError -> ConnectionState.Error(err)
                         else -> ConnectionState.Error(DecimatorError.FtdiError(err?.message))
                     }
                 }
-            }
         }
     }
 
@@ -84,6 +82,11 @@ class DecimatorViewModel : ViewModel() {
             current.connection.close()
             _state.value = ConnectionState.NoDevice
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disconnect()
     }
 
     /**

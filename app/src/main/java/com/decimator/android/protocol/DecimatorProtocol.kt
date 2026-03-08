@@ -1,5 +1,7 @@
 package com.decimator.android.protocol
 
+import android.util.Log
+
 /**
  * Decimator control protocol: pin encoding and command/response conversion.
  * Faithful port from quentinmit/decimctl (protocol.py) — Apache 2.0.
@@ -8,18 +10,21 @@ package com.decimator.android.protocol
  * state of 8 pins; bit 6 (0x40) = clock, bit 3 (0x08) = data to/from FPGA.
  */
 object DecimatorProtocol {
+    private const val TAG = "DecimatorProtocol"
+
     /** Total register space: 512 bytes (0x200). */
     const val REGISTER_SIZE = 0x200
 
-    /** Preamble for read commands (from protocol.py). */
-    val READ_PREAMBLE: ByteArray = byteArrayOf(
+    /** Preamble for read and write commands (decimctl protocol.py: READ_PREAMBLE and WRITE_PREAMBLE are identical). */
+    val COMMAND_PREAMBLE: ByteArray = byteArrayOf(
         0x00, 0x40, 0x00, 0x40, 0x48, 0x48, 0x40, 0x00
     )
 
-    /** Preamble for write commands. */
-    val WRITE_PREAMBLE: ByteArray = byteArrayOf(
-        0x00, 0x40, 0x00, 0x40, 0x48, 0x48, 0x40, 0x00
-    )
+    /** Preamble for read commands (same as COMMAND_PREAMBLE per protocol.py). */
+    val READ_PREAMBLE: ByteArray get() = COMMAND_PREAMBLE
+
+    /** Preamble for write commands (same as COMMAND_PREAMBLE per protocol.py). */
+    val WRITE_PREAMBLE: ByteArray get() = COMMAND_PREAMBLE
 
     /** Postamble for write commands. */
     val WRITE_POSTAMBLE: ByteArray = byteArrayOf(
@@ -61,8 +66,7 @@ object DecimatorProtocol {
         var i = 0
         while (i < raw.size) {
             if (i + 3 < raw.size && raw[i + 2] != raw[i + 3]) {
-                // Python logs "difference at bit"; treat as protocol error
-                throw ProtocolException("Bit phase mismatch at bit ${statusBits.size}")
+                Log.w(TAG, "Bit phase mismatch at bit ${statusBits.size} — continuing")
             }
             statusBits.add((raw[i + 2].toInt() and 0xFF and 0x08) != 0)
             i += 4

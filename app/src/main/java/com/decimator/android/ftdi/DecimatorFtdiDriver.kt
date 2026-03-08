@@ -3,6 +3,7 @@ package com.decimator.android.ftdi
 import android.content.Context
 import android.hardware.usb.UsbDevice
 import com.decimator.android.protocol.DecimatorProtocol
+import com.decimator.android.usb.DecimatorUsbConstants
 import com.ftdi.j2xx.D2xxManager
 import com.ftdi.j2xx.FT_Device
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +84,7 @@ object DecimatorFtdiDriver {
             val chunkBuf = ByteArray(chunk)
             val read = ft.read(chunkBuf, chunk)
             if (read < 0) throw DecimatorError.IOError("read failed: $read")
+            if (read != chunk) throw DecimatorError.IOError("Short read: expected $chunk, got $read")
             chunkBuf.copyInto(out, outOffset, 0, read)
             inOffset += chunk
             outOffset += read
@@ -166,21 +168,17 @@ class DecimatorConnection(private val ft: FT_Device) {
 }
 
 sealed class DecimatorError : Exception() {
-    override val message: String get() = when (this) {
-        is UnsupportedDevice -> "Not a supported Decimator/FTDI device: ${device.deviceName}"
-        is OpenFailed -> reason
-        is FtdiError -> msg ?: "FTDI error"
-        is IOError -> msg ?: "I/O error"
-        is DeviceDisconnected -> "Device disconnected"
-    }
+    override val message: String
+        get() = when (this) {
+            is UnsupportedDevice -> "Not a supported Decimator/FTDI device: ${device.deviceName}"
+            is OpenFailed -> reason
+            is FtdiError -> ftdiMessage ?: "FTDI error"
+            is IOError -> ioMessage ?: "I/O error"
+            is DeviceDisconnected -> "Device disconnected"
+        }
     data class UnsupportedDevice(val device: UsbDevice) : DecimatorError()
     data class OpenFailed(val reason: String) : DecimatorError()
-    data class FtdiError(override val message: String?) : DecimatorError()
-    data class IOError(override val message: String?) : DecimatorError()
-    object DeviceDisconnected : DecimatorError()
-}
-
-private object DecimatorUsbConstants {
-    const val VENDOR_ID = 0x215F
-    const val PRODUCT_ID = 0x6000
+    data class FtdiError(val ftdiMessage: String?) : DecimatorError()
+    data class IOError(val ioMessage: String?) : DecimatorError()
+    data object DeviceDisconnected : DecimatorError()
 }

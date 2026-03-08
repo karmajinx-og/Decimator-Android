@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.os.Build
 import android.os.Bundle
@@ -34,11 +35,23 @@ class MainActivity : ComponentActivity() {
                 intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
             }
             val granted = intent?.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false) == true
-            val vm = viewModel ?: return
             if (device != null) {
-                if (granted) vm.onPermissionGranted(this@MainActivity, device)
-                else vm.onPermissionDenied(device)
+                if (granted) viewModel.onPermissionGranted(this@MainActivity, device)
+                else viewModel.onPermissionDenied(device)
             }
+        }
+    }
+
+    private val usbDetachReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != UsbManager.ACTION_USB_DEVICE_DETACHED) return
+            val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE, UsbDevice::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(UsbManager.EXTRA_DEVICE)
+            }
+            viewModel.onDeviceDetached(device)
         }
     }
 
@@ -62,12 +75,14 @@ class MainActivity : ComponentActivity() {
             0
         }
         registerReceiver(usbPermissionReceiver, IntentFilter(UsbPermissionHelper.ACTION_USB_PERMISSION), flags)
+        registerReceiver(usbDetachReceiver, IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED), flags)
         viewModel.refreshDeviceState(this)
     }
 
     override fun onPause() {
         super.onPause()
         unregisterReceiver(usbPermissionReceiver)
+        unregisterReceiver(usbDetachReceiver)
     }
 
     override fun onNewIntent(intent: Intent?) {

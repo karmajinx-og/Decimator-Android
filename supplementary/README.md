@@ -9,6 +9,7 @@ This folder holds **key documents and copies** used for rollback and reference. 
 - **RULES.md** — Project rules (same as docs/RULES.md).
 - **MASTER_CONTEXT.md** — Master context (same as root MASTER_CONTEXT.md).
 - **PROJECT_LOG.md** — Project log (same as docs/PROJECT_LOG.md).
+- **RECALL.md** — Recall (same as docs/RECALL.md): what’s done, what’s next, how to resume.
 
 ## How to use
 
