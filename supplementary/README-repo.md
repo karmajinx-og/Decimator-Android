@@ -43,7 +43,7 @@ The project is a Git repo. To push to GitHub:
 
 ## Build
 
-Open the project in **Android Studio** (Hedgehog or later recommended) and sync. The Gradle wrapper (`./gradlew`) is included. You need the **FTDI D2XX** library in **app/libs/** (see **app/libs/README.md**) or the build will fail on missing `com.ftdi.j2xx` classes. Then:
+Open the project in **Android Studio** (Hedgehog or later recommended) to sync and generate the Gradle wrapper if needed. Then:
 
 ```bash
 ./gradlew assembleDebug
