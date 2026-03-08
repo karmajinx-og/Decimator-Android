@@ -1,0 +1,34 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# Android Studio
+*.iml
+.idea/
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+
+# Keystore (do not commit)
+*.jks
+*.keystore
+
+# FTDI D2XX library (download separately; do not redistribute)
+# Uncomment to ignore the AAR if you add it under app/libs:
+# app/libs/*.aar

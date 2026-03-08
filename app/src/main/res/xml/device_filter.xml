@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Decimator devices use FTDI chip: VID 0x215F, PID 0x6000 (from decimctl / design doc) -->
+<resources>
+    <usb-device
+        vendor-id="8543"
+        product-id="24576" />
+</resources>
