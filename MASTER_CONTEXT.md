@@ -81,7 +81,7 @@ Keep RECALL.md updated when you finish major work or change priorities.
 
 ## Backups and rollback
 
-- **Build backup:** Create a **new** timestamped zip of the project (excluding `.git`, `build/`, `.gradle/`, etc.) and put it in **backups/**. Do this before major changes or releases. See **backups/README.md**.
+- **Build backup:** Create a **new** timestamped zip of the project (excluding `.git`, `build/`, `.gradle/`, etc.) and put it in **backups/**. Do this before major changes or releases. See **backups/README.md**. Current backup (as of 2026-03-09): **backups/Decimator-Android-build-2026-03-09.zip** (see RECALL for restore steps).
 - **Supplementary / rollback:**  
   - Keep key files (e.g. design doc, README copy, rules) in **supplementary/**.  
   - **Update** this folder when you add or change rollback-worthy files.  

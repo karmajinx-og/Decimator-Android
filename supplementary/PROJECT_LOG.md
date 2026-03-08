@@ -153,3 +153,12 @@
 - **Docs added:** [docs/FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) — explains single-copy policy, canonical path, what was removed, and that audit snapshots should use tags or zips, not a second full folder.
 - **Docs updated:** MASTER_CONTEXT.md (directory layout + link to FOLDER_STRUCTURE.md), PROJECT_LOG.md (this entry), RECALL.md (GitHub section — single copy).
 - **GitHub:** Changes committed and pushed to `main`.
+
+---
+
+## 16. RECALL, backups and rollback updated (2026-03-09)
+
+- **RECALL.md:** Section 11 added — session summary (folder consolidation, FTDI licence audit doc, all changes committed/pushed, backups). "When you come back" updated with backup pointers (build backup 2026-03-09, supplementary/ and supplementary-and-rollback.zip current). Backups section 8 updated: current build backup `backups/Decimator-Android-build-2026-03-09.zip`; supplementary-and-rollback.zip regenerated. Key file reference: FOLDER_STRUCTURE.md, FTDI_LICENCE_AUDIT.md added.
+- **Build backup:** New timestamped zip **backups/Decimator-Android-build-2026-03-09.zip** created (source + config, excludes .git, build, .gradle, etc.). Add app/libs/d2xx.jar after unzip.
+- **Supplementary / rollback:** supplementary/ updated with latest MASTER_CONTEXT, PROJECT_LOG, RECALL; **supplementary-and-rollback.zip** regenerated from supplementary/.
+- **MASTER_CONTEXT:** Backups and rollback section unchanged; RECALL is the source for current backup names.

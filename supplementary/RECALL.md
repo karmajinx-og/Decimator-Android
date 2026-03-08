@@ -12,6 +12,7 @@
 3. **Next step:** Install on a **physical Android device** with **USB host + OTG**. Connect a **Decimator** (or leave unplugged). Test: “Check for device” → with device you should see “Device found” and “Grant USB permission”; grant → Connecting → Connected and “Disconnect”. Without device: “Connect a Decimator device via USB OTG”.
 4. **After device test:** Pick from “What is next to be done” below (device type from serial, register map, control UI).
 5. **Full list of every fix:** [docs/FIXES_APPLIED.md](FIXES_APPLIED.md).
+6. **Backups (as of 2026-03-09):** Build backup **backups/Decimator-Android-build-2026-03-09.zip**. Doc rollback: **supplementary/** and **supplementary-and-rollback.zip** are current.
 
 **Legal — FTDI licence:** Permission request **sent** to FTDI (2026-03-08); **awaiting response**. See [docs/FTDI_LICENCE_AUDIT.md](FTDI_LICENCE_AUDIT.md). Do not publish to stores until permission is granted or resolved.
 
@@ -80,8 +81,8 @@
 
 ### 8. Backups and rollback
 
-- **Build backups:** `backups/README.md` — how to create timestamped zips (exclude .git, build, .gradle, etc.). **Lock backup (this state):** `backups/Decimator-Android-build-2026-03-08-lock.zip` (not in Git; `backups/*.zip` in .gitignore). Restore from this zip to return to “build locked, emulator tested” state; add **app/libs/d2xx.jar** again after unzip (excluded from zip).
-- **Supplementary:** Folder `supplementary/` — copies of design doc, README, RULES, MASTER_CONTEXT, PROJECT_LOG, RECALL. **supplementary-and-rollback.zip** regenerated at lock (zip in .gitignore).
+- **Build backups:** `backups/README.md` — how to create timestamped zips (exclude .git, build, .gradle, etc.). **Current build backup:** `backups/Decimator-Android-build-2026-03-09.zip` (not in Git; `backups/*.zip` in .gitignore). Restore from this zip to return to this state; add **app/libs/d2xx.jar** again after unzip (excluded from zip).
+- **Supplementary:** Folder `supplementary/` — copies of design doc, README, RULES, MASTER_CONTEXT, PROJECT_LOG, RECALL. **supplementary-and-rollback.zip** regenerated 2026-03-09 (zip in .gitignore).
 
 ### 9. Build audit — all fixes applied
 
@@ -96,6 +97,13 @@
 - **Build fixes:** MainActivity — nullable `intent` in receivers (`intent ?: return`), `onNewIntent(intent: Intent)`; DecimatorFtdiDriver — removed unsupported `writeTimeout` from DriverParameters (API has only readTimeout); DecimatorApp — `LocalContext.current` read at Composable level, passed to onClick; Toast on “Check for device” for feedback.
 - **App name:** **Deci-Droid** (in-app title and `strings.xml` app_name).
 - **Emulator:** Build successful; UI shows Deci-Droid, “Check for device” works (Toast). State stays NoDevice on emulator (no USB device). **Locked for return:** next = test on **physical device** with Decimator.
+
+### 11. Session 2026-03-09 — docs, FTDI audit, backup and rollback
+
+- **Folder consolidation:** Single canonical copy at **developer/Decimator-Android**; redundant `~/Decimator-Android` removed. See [docs/FOLDER_STRUCTURE.md](../docs/FOLDER_STRUCTURE.md).
+- **FTDI licence audit:** [docs/FTDI_LICENCE_AUDIT.md](FTDI_LICENCE_AUDIT.md) added — distribution risk, permission request sent, next steps. Do not publish to stores until FTDI response.
+- **All pending changes committed and pushed:** Design doc, app code (MainActivity, DecimatorFtdiDriver, DecimatorApp, strings), app/libs/README, backups/README, FTDI_LICENCE_AUDIT — all on `main`.
+- **Backups and rollback:** New build backup **backups/Decimator-Android-build-2026-03-09.zip** created. **supplementary/** updated with latest MASTER_CONTEXT, PROJECT_LOG, RECALL; **supplementary-and-rollback.zip** regenerated. Restore from backup zip or supplementary folder if needed; add **app/libs/d2xx.jar** again after unzip (excluded from zip).
 
 ---
 
@@ -145,6 +153,8 @@
 | Project log | `docs/PROJECT_LOG.md` |
 | Rules | `docs/RULES.md` |
 | Recall (this) | `docs/RECALL.md` |
+| Folder structure | `docs/FOLDER_STRUCTURE.md` |
+| FTDI licence audit | `docs/FTDI_LICENCE_AUDIT.md` |
 | Sharing for audit | `docs/SHARING_FOR_AUDIT.md` |
 | Every fix applied | `docs/FIXES_APPLIED.md` |
 | FTDI driver | `app/.../ftdi/DecimatorFtdiDriver.kt` |
